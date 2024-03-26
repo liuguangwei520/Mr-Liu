@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script th:src="@{jquery-1.8.3.min.js}"></script>
+    <script>
+        $(function () {
+            $.getJSON("/getAllClub",function (data) {
+                $("#clubs").html("");
+                $("#clubs").append("<option value=\"0\">请选择</option>");
+                for (let i = 0; i < data.length; i++) {
+                    $("#clubs").append("<option value=\""+data[i].cid+"\">"+data[i].cname+"</option>");
+                }
+            })
+        })
+    </script>
+</head>
+<body>
+    <h1>添加球员</h1>
+    <form id="addPlayer" action="/addPlayer">
+        球员姓名:<input type="text" name="pname" id="pname"><br/>
+        出生时间:<input type="text" name="birthday" id="birthday"> yyyy-MM-dd<br/>
+        球员身高:<input type="text" name="height" id="height"> 单位cm<br/>
+        球员体重:<input type="text" name="weight" id="weight"> 单位kg<br/>
+        球员位置:
+        <input type="radio" value="控球后卫" checked="checked" name="position"> 控球后卫
+        <input type="radio" value="得分后卫"  name="position">得分后卫
+        <input type="radio" value="小前锋"  name="position">小前锋
+        <input type="radio" value="大前锋"  name="position">大前锋
+        <input type="radio" value="中锋" name="position">中锋
+        <br>
+        所属球队:<select id="clubs" name="cid">
+            <option></option>
+        </select><br/>
+        相关操作:<input type="submit" value="新增">
+        <input type="button" value="返回">
+    </form>
+    <script>
+        $("#addPlayer").submit(function () {
+            if($("#pname").val()==""){
+                alert("名字不能为空的!");
+                return false;
+            }
+            var msg=/^\d{4}-\d{2}-\d{2}$/
+
+            if($("#birthday").val()==""){
+                alert("生日不能为空的!");
+                return false;
+            }
+            if(!msg.test($("#birthday").val())){
+                alert("请输入正确的日期");
+                return false;
+            }
+            if($("#height").val()==""){
+                alert("身高不能为空的!");
+                return false;
+            }
+            if($("#weight").val()==""){
+                alert("体重不能为空的!");
+                return false;
+            }
+            if($("#clubs").val()=="0"){
+                alert("请选择球队");
+                return false;
+            }
+            return true;
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<!--xmlns:th="http://thymeleaf.org"-->
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script th:src="@{jquery-1.8.3.min.js}"></script>
+    <script>
+        $(function () {
+            $.getJSON("/getAllClub",function (data) {
+                $("#clubs").html("");
+                $("#clubs").append("<option value=\"0\">请选择</option>");
+                var cid=$("#cid").val();
+                for (let i = 0; i < data.length; i++) {
+                    if(data[i].cid==cid){
+                        $("#clubs").append("<option value=\""+data[i].cid+"\" selected>"+data[i].cname+"</option>");
+                    }else {
+                        $("#clubs").append("<option value=\""+data[i].cid+"\">"+data[i].cname+"</option>");
+                    }
+
+                }
+            })
+        })
+    </script>
+</head>
+<body>
+    <input type="hidden" th:value="${cid}" id="cid">
+    <h1>美国职业篮球联盟(NBA)球员信息</h1>
+    <form action="/getPlayerByCondition">
+        球员姓名:<input type="text" value="" name="name" th:value="${name}">
+        所属球队:
+        <select id="clubs" name="cid">
+            <option value=""></option>
+        </select>
+        <input type="submit" value="查询">
+        <input type="button" value="添加新球员信息" id="addPlayer">
+    </form>
+    <table border="1px">
+        <tr>
+            <td>球员编号</td>
+            <td>球员名称</td>
+            <td>出生年月</td>
+            <td>球员身高</td>
+            <td>球员体重</td>
+            <td>球员位置</td>
+            <td>所属球队</td>
+            <td>相关操作</td>
+        </tr>
+        <tr th:each="player:${playersList}">
+            <td th:text="${player.getPid()}"></td>
+            <td th:text="${player.getPname()}"></td>
+            <td th:text="${player.getBirthday()}"></td>
+            <td th:text="${player.getHeight()}"></td>
+            <td th:text="${player.getWeight()}"></td>
+            <td th:text="${player.getPosition()}"></td>
+            <td th:text="${player.getCname()}"></td>
+            <td><a href="#" id="del" onclick="del(this)" th:class="${player.getPid()}">删除</a></td>
+        </tr>
+    </table>
+</body>
+<script>
+    $("#addPlayer").click(function () {
+        window.location.href="toAdd";
+    })
+    function del(obj) {
+        if(confirm("确定要删除吗")){
+            var id=$(obj).attr("class");
+            $.getJSON("/delPlayer",{"id":id},function (data) {
+                if(data.isAdd>0){
+                    alert("删除成功");
+                    $(obj).parent().parent().remove();
+                }else {
+                    alert("删除成功");
+                }
+            })
+        }
+    }
+</script>
+</html>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chenwenxing.demo.dao.PlayersDao">
+
+    <insert id="addPlayer">
+        insert players(pname,birthday,height,weight,position,cid)
+        values (#{pname},#{birthday},#{height},#{weight},#{position},#{cid})
+    </insert>
+
+    <delete id="deleteById">
+        delete from players where pid=#{id}
+    </delete>
+
+    <select id="getPlayerByCondition" resultType="com.chenwenxing.demo.entity.Players">
+        SELECT p.*,c.cname
+        FROM players p
+        LEFT JOIN clubs c
+        ON p.cid=c.cid
+        <where>
+            <if test="name!=null and name!=''">
+                p.pname LIKE concat('%',#{name},'%')
+            </if>
+            <if test="cid!=null and cid!=0">
+                AND p.cid=#{cid}
+            </if>
+        </where>
+        order by birthday desc
+
+    </select>
+</mapper>
